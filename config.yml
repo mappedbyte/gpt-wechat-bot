@@ -1,0 +1,14 @@
+chat:
+  autoPass: true #是否自动通过好友
+  proxy: false #是否使用代理
+  proxyUrl: http://127.0.0.1:7890 #代理地址
+  sessionTimeOut: 60
+  model: gpt-4  #替换模型
+
+one-api:
+  proxy: #替换为openAI或第三方的API地址
+  s-token: #替换为接口的token
+
+push:
+  url: http://www.pushplus.plus/send
+  token: #替换为自己的token
