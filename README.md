@@ -41,8 +41,16 @@
 <img src="image/group_msg.png"/>
 
 
+#### 机器人掉线
+<img src="image/exit.png">
 
 ### 使用说明
+#### 0.注册消息推送平台
+* [pushplus](https://www.pushplus.plus) 获取自己的token
+
+#### 1.配置配置文件
+
+修改下载的config.yaml文件
 
 ```
 chat:
@@ -61,3 +69,8 @@ push:
   token: #替换为自己的token
 
 ```
+
+#### 2.运行程序
+* 对于windows用户,可以选择直接运行`chatbot-windows.exe`,回弹出浏览器窗口扫码登录,要求配置文件配置正确,如果失败将会黑窗口一闪而过,也可选择在cmd中运行程序,会打印失败信息。
+* 对于linux用户,需要给`chatbot-linux`文件执行权限,执行`chmod +x chatbot-linux`,然后运行`chatbot-linux`程序, `nohup ./chatbot-linux &` 将会启动后台运行,需要使用 `cat nohup.out` 查看二维码扫码登录。
+* 对于mac用户,需要给`chatbot-mac`文件执行权限,执行`chmod +x chatbot-mac`,然后运行`chatbot-mac`程序, `nohup ./chatbot-mac &` 将会启动后台运行,需要使用 `cat nohup.out` 查看二维码扫码登录。
