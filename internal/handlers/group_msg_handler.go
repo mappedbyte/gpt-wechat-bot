@@ -3,8 +3,10 @@ package handlers
 import (
 	"github.com/eatmoreapple/openwechat"
 	"math/rand"
+	"net/http"
 	"strings"
 	"time"
+	"wechatBot/internal/global"
 	"wechatBot/internal/gpt"
 )
 
@@ -51,6 +53,9 @@ func NewGroupMessage(message *openwechat.Message) (*GroupMessage, error) {
 func (g *GroupMessage) handle() error {
 	//如果是纯文本，使用ChatGPT进行回复
 	if g.msg.IsText() && g.msg.IsAt() {
+		if strings.Contains(g.msg.Content, global.ServerConfig.Mode.ImagePrefix) {
+			return g.GroupReplyImage()
+		}
 		return g.ReplyText()
 	}
 	return nil
@@ -93,4 +98,33 @@ func (g *GroupMessage) NewRequestText() []any {
 		Content: content,
 	})
 	return requestList
+}
+
+func (g *GroupMessage) GroupReplyImage() error {
+	replaceText := "@" + g.self.NickName
+	content := strings.ReplaceAll(g.msg.Content, replaceText, "")
+	content = strings.ReplaceAll(content, "画图：", "")
+	images := gpt.ReplyImage(content)
+
+	line := strings.Repeat("-", 50)
+	atText := "@" + g.sender.NickName
+	responseText := atText + "\u2005" + "\n" + content + "\n" + line + "\n"
+
+	for _, image := range images {
+		if len(images) > 0 {
+
+			request, _ := http.NewRequest("GET", image, nil)
+			response, err := global.DiscordSession.Client.Do(request)
+			//response, err := http.Get(image)
+			if err != nil {
+				continue
+			}
+			responseText = strings.Trim(responseText, "\n")
+			_, err = g.msg.ReplyText(responseText)
+			g.msg.ReplyImage(response.Body)
+
+		}
+
+	}
+	return nil
 }

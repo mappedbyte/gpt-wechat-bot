@@ -3,17 +3,17 @@ module wechatBot
 go 1.20
 
 require (
+	github.com/bwmarrin/discordgo v0.27.1
 	github.com/eatmoreapple/openwechat v1.4.6
 	github.com/fsnotify/fsnotify v1.7.0
 	github.com/patrickmn/go-cache v2.1.0+incompatible
-	github.com/rogpeppe/go-internal v1.9.0
-	github.com/satori/go.uuid v1.2.0
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
 	github.com/spf13/viper v1.18.2
 
 )
 
 require (
+	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
@@ -27,6 +27,7 @@ require (
 	github.com/subosito/gotenv v1.6.0 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.9.0 // indirect
+	golang.org/x/crypto v0.16.0 // indirect
 	golang.org/x/exp v0.0.0-20230905200255-921286631fa9 // indirect
 	golang.org/x/sys v0.15.0 // indirect
 	golang.org/x/text v0.14.0 // indirect

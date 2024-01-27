@@ -6,7 +6,10 @@ import (
 	"github.com/patrickmn/go-cache"
 	"log/slog"
 	"math/rand"
+	"net/http"
+	"strings"
 	"time"
+	"wechatBot/internal/global"
 	"wechatBot/internal/gpt"
 	"wechatBot/internal/history"
 )
@@ -47,10 +50,14 @@ func NewUserMessage(message *openwechat.Message) (*UserMessage, error) {
 }
 func (u *UserMessage) Handle() error {
 	if u.msg.IsText() {
+		if strings.HasPrefix(u.msg.Content, "画图：") {
+			return u.ReplyImage()
+		}
 		return u.ReplyText()
 	}
 	return nil
 }
+
 func (u *UserMessage) ReplyText() error {
 	maxInt := rand.New(rand.NewSource(time.Now().UnixNano())).Intn(2)
 	time.Sleep(time.Duration(maxInt) * time.Second)
@@ -76,4 +83,22 @@ func (u *UserMessage) NewRequestText() []any {
 	h = append(h, m)
 	u.history.SetUserHistory(m)
 	return h
+}
+
+func (u *UserMessage) ReplyImage() error {
+	content := u.msg.Content
+	content = strings.ReplaceAll(content, "画图：", "")
+	images := gpt.ReplyImage(content)
+	for _, image := range images {
+		if len(image) > 0 {
+			request, _ := http.NewRequest("GET", image, nil)
+			response, err := global.DiscordSession.Client.Do(request)
+			if err != nil {
+				continue
+			}
+			u.msg.ReplyImage(response.Body)
+		}
+
+	}
+	return nil
 }

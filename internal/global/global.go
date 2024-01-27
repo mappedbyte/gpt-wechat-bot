@@ -1,6 +1,7 @@
 package global
 
 import (
+	"github.com/bwmarrin/discordgo"
 	"net/http"
 	"wechatBot/internal/config"
 )
@@ -8,5 +9,6 @@ import (
 var (
 	ServerConfig         *config.ServerConfig = &config.ServerConfig{}
 	Client                                    = http.Client{}
-	DeadlineExceededText                      = "请求GPT服务器超时[裂开]，请重新发送问题[旺柴]"
+	DiscordSession       *discordgo.Session
+	DeadlineExceededText = "请求GPT服务器超时[裂开]，请重新发送问题[旺柴]"
 )

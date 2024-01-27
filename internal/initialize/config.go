@@ -11,6 +11,7 @@ import (
 	"sync"
 	"wechatBot/internal/config"
 	"wechatBot/internal/global"
+	"wechatBot/internal/gpt"
 )
 
 var configLock sync.Mutex
@@ -56,4 +57,12 @@ func InitConfig() {
 		}
 		global.ServerConfig = newConfig
 	})
+}
+
+func InitDiscord() {
+	discord, err := gpt.InitDiscord()
+	if err != nil {
+		slog.Error("initialize", "InitDiscord error", err.Error())
+	}
+	global.DiscordSession = discord
 }

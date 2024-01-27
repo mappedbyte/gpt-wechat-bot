@@ -13,6 +13,7 @@ import (
 func Run() *openwechat.Bot {
 	initialize.InitConfig()
 	initialize.InitProxy()
+	initialize.InitDiscord()
 	h, err := handlers.NewHandlers()
 	if err != nil {
 		slog.Error("application.Run", "errorMsg", "初始化消息处理器失败,"+err.Error())
