@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"github.com/eatmoreapple/openwechat"
+	"log/slog"
 	"math/rand"
 	"net/http"
 	"strings"
@@ -119,9 +120,15 @@ func (g *GroupMessage) GroupReplyImage() error {
 			response, err := global.DiscordSession.Client.Do(request)
 			//response, err := http.Get(image)
 			if err != nil {
+				slog.Error("group_msg_handler", "GroupReplyImage.GetImage", err.Error())
 				continue
 			}
-			g.msg.ReplyImage(response.Body)
+			_, err = g.msg.ReplyImage(response.Body)
+			if err != nil {
+				//出现失败  重试一次
+				g.msg.ReplyImage(response.Body)
+			}
+
 			responseText = strings.Trim(responseText, "\n")
 			_, err = g.msg.ReplyText(responseText)
 		}

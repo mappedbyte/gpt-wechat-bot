@@ -2,6 +2,7 @@ package gpt
 
 import (
 	"context"
+	"fmt"
 	"github.com/bwmarrin/discordgo"
 	"log/slog"
 	"net/http"
@@ -47,20 +48,22 @@ func InitDiscord() (*discordgo.Session, error) {
 func ReplyImage(imagePrompt string) []string {
 	if !strings.HasPrefix(imagePrompt, "画") {
 		slog.Info("ReplyImage", "imagePrompt", imagePrompt)
-		imagePrompt = "画:" + imagePrompt
+		imagePrompt = fmt.Sprintf(` {"model": "dall-e-3","prompt": "%s","n": 1,"size": "1024x1024"}`, imagePrompt)
 	}
+	images := make([]string, 0)
 	if UserMention == "" {
 		user, err := global.DiscordSession.User(global.ServerConfig.DiscordConfig.BotId)
 		if err != nil {
 			slog.Error("ReplyImage", "获取bot用户失败", err.Error())
-			return make([]string, 0)
+			images = append(images, global.DeadlineExceededImage)
+			return images
 		}
 		UserMention = user.Mention()
 	}
-
 	message, err := global.DiscordSession.ChannelMessageSend(global.ServerConfig.DiscordConfig.ChannelId, UserMention+imagePrompt)
 	if err != nil {
-		return make([]string, 0)
+		images = append(images, global.DeadlineExceededImage)
+		return images
 	}
 	ctx, cancelFunc := context.WithTimeout(context.Background(), 65*time.Second)
 	slog.Info("ReplyImage", "请求的接口MessageId", message.ID)
