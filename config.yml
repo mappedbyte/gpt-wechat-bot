@@ -1,14 +1,27 @@
 chat:
-  autoPass: true #是否自动通过好友
-  proxy: false #是否使用代理
-  proxyUrl: http://127.0.0.1:7890 #代理地址
+  autoPass: true #是否自动通过好友添加
+  proxy: false #是否开启代理
+  proxyUrl: http://127.0.0.1:7890
   sessionTimeOut: 60
-  model: gpt-4  #替换模型
+  model: gpt-4 #模型选择
+
+
+# 以下为可选配置 画图前缀
+mode:
+  imagePrefix: 画图：
 
 one-api:
-  proxy: #替换为openAI或第三方的API地址
-  s-token: #替换为接口的token
+  proxy: #gpt接口地址
+  s-token: #gpt token
 
 push:
   url: http://www.pushplus.plus/send
-  token: #替换为自己的token
+  token: #pushPlus的个人token
+
+
+discord:
+  channelId: #频道ID
+  botId: #coze机器人的ID
+  sendBotToken: #discord自建机器人的token
+  proxyUrl: http://127.0.0.1:7890  #代理地址
+  proxyEnable: false #是否开启代理

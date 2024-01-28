@@ -62,7 +62,7 @@ func ReplyImage(imagePrompt string) []string {
 	if err != nil {
 		return make([]string, 0)
 	}
-	ctx, cancelFunc := context.WithTimeout(context.Background(), 35*time.Second)
+	ctx, cancelFunc := context.WithTimeout(context.Background(), 65*time.Second)
 	slog.Info("ReplyImage", "请求的接口MessageId", message.ID)
 	go WatchImage(ctx, cancelFunc, message.ID)
 	<-ctx.Done()
@@ -85,7 +85,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 			}
 			if len(images) == 0 {
 				ticker := time.NewTicker(1 * time.Second)
-				ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+				ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 				defer cancel()
 				go Operation(ctx, cancel, ticker, s, m)
 				<-ctx.Done()
@@ -99,7 +99,9 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 						images = append(images, embed.URL)
 					}
 				}
-
+				if len(images) == 0 {
+					images = append(images, global.DeadlineExceededImage)
+				}
 				slog.Info("ChannelMessage", "返回的图片", images)
 			}
 			ResponseImage[m.ReferencedMessage.ID] = images
