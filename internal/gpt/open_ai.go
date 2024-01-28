@@ -49,11 +49,11 @@ func (o *OpenAI) Chat(msg []any) (string, error) {
 	request.Header.Set("Authorization", "Bearer "+global.ServerConfig.OneApiConfig.SToken)
 	request.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
 	response, err := global.Client.Do(request)
-	fmt.Println(response.StatusCode)
-	if err != nil || response.StatusCode != 200 {
+	if err != nil || (response != nil && response.StatusCode != 200) {
 		slog.Info("OpenAI", "请求gpt接口出现异常", "responseStatus:"+strconv.Itoa(response.StatusCode))
 		return global.DeadlineExceededText, errors.New("请求gpt接口出现异常")
 	}
+	fmt.Println(response.StatusCode)
 	slog.Info("OpenAI", "GPT Response Status", strconv.Itoa(response.StatusCode))
 	defer response.Body.Close()
 	var responseText string
