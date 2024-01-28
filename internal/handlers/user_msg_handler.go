@@ -89,6 +89,8 @@ func (u *UserMessage) ReplyImage() error {
 	content := u.msg.Content
 	content = strings.ReplaceAll(content, "画图：", "")
 	images := gpt.ReplyImage(content)
+	//client := http.Client{}
+	//client.Transport = global.Client.Transport
 	for _, image := range images {
 		if len(image) > 0 {
 			request, _ := http.NewRequest("GET", image, nil)

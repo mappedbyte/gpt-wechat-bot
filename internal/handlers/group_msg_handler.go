@@ -23,12 +23,14 @@ type GroupMessage struct {
 
 func GroupMessageContextHandler() func(ctx *openwechat.MessageContext) {
 	return func(ctx *openwechat.MessageContext) {
-		groupMessage, err := NewGroupMessage(ctx.Message)
-		if err != nil {
+		go func() {
+			groupMessage, err := NewGroupMessage(ctx.Message)
+			if err != nil {
+				return
+			}
+			_ = groupMessage.handle()
 			return
-		}
-		err = groupMessage.handle()
-		return
+		}()
 	}
 }
 
@@ -109,22 +111,20 @@ func (g *GroupMessage) GroupReplyImage() error {
 	line := strings.Repeat("-", 50)
 	atText := "@" + g.sender.NickName
 	responseText := atText + "\u2005" + "\n" + content + "\n" + line + "\n"
-
+	//client := http.Client{}
+	//client.Transport = global.Client.Transport
 	for _, image := range images {
 		if len(images) > 0 {
-
 			request, _ := http.NewRequest("GET", image, nil)
 			response, err := global.DiscordSession.Client.Do(request)
 			//response, err := http.Get(image)
 			if err != nil {
 				continue
 			}
+			g.msg.ReplyImage(response.Body)
 			responseText = strings.Trim(responseText, "\n")
 			_, err = g.msg.ReplyText(responseText)
-			g.msg.ReplyImage(response.Body)
-
 		}
-
 	}
 	return nil
 }
