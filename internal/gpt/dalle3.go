@@ -2,12 +2,10 @@ package gpt
 
 import (
 	"context"
-	"fmt"
 	"github.com/bwmarrin/discordgo"
 	"log/slog"
 	"net/http"
 	"net/url"
-	"strings"
 	"time"
 	"wechatBot/internal/global"
 )
@@ -46,10 +44,10 @@ func InitDiscord() (*discordgo.Session, error) {
 }
 
 func ReplyImage(imagePrompt string) []string {
-	if !strings.HasPrefix(imagePrompt, "画") {
+	/*	if !strings.HasPrefix(imagePrompt, "画") {
 		slog.Info("ReplyImage", "imagePrompt", imagePrompt)
 		imagePrompt = fmt.Sprintf(` {"model": "dall-e-3","prompt": "%s","n": 1,"size": "1024x1024"}`, imagePrompt)
-	}
+	}*/
 	images := make([]string, 0)
 	//images = append(images, global.DeadlineExceededImage)
 	if UserMention == "" {
