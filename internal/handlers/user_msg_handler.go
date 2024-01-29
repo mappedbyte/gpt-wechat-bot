@@ -100,7 +100,7 @@ func (u *UserMessage) ReplyImage() error {
 			}
 			u.msg.ReplyImage(response.Body)
 		}
-
 	}
+
 	return nil
 }

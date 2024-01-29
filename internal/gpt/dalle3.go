@@ -51,6 +51,7 @@ func ReplyImage(imagePrompt string) []string {
 		imagePrompt = fmt.Sprintf(` {"model": "dall-e-3","prompt": "%s","n": 1,"size": "1024x1024"}`, imagePrompt)
 	}
 	images := make([]string, 0)
+	//images = append(images, global.DeadlineExceededImage)
 	if UserMention == "" {
 		user, err := global.DiscordSession.User(global.ServerConfig.DiscordConfig.BotId)
 		if err != nil {
@@ -65,7 +66,7 @@ func ReplyImage(imagePrompt string) []string {
 		images = append(images, global.DeadlineExceededImage)
 		return images
 	}
-	ctx, cancelFunc := context.WithTimeout(context.Background(), 65*time.Second)
+	ctx, cancelFunc := context.WithTimeout(context.Background(), 60*time.Second)
 	slog.Info("ReplyImage", "请求的接口MessageId", message.ID)
 	go WatchImage(ctx, cancelFunc, message.ID)
 	<-ctx.Done()
@@ -76,9 +77,9 @@ func ReplyImage(imagePrompt string) []string {
 // message is created on any channel that the authenticated bot has access to.
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	go func() {
-		images := make([]string, 0)
 		slog.Info("messageCreate", "返回的messageId", m.ID)
 		if m.ReferencedMessage != nil {
+			images := make([]string, 0)
 			slog.Info("messageCreate", "返回的引用的messageId", m.ReferencedMessage.ID)
 			for _, embed := range m.Embeds {
 				if embed != nil {
@@ -88,18 +89,21 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 			}
 			if len(images) == 0 {
 				ticker := time.NewTicker(1 * time.Second)
-				ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
-				defer cancel()
+				ctx, cancel := context.WithTimeout(context.Background(), 40*time.Second)
 				go Operation(ctx, cancel, ticker, s, m)
 				<-ctx.Done()
-
+				slog.Info("messageCreate", "go Operation Done", "运行结束")
 				message, err := s.ChannelMessage(m.ChannelID, m.Message.ID)
 				if err != nil {
 					slog.Error("messageCreate", "重新获取图片状态失败", err.Error())
 				}
+
+				slog.Info("messageCreate", "message.Embeds", message.Embeds)
+
 				for _, embed := range message.Embeds {
-					if embed != nil {
-						images = append(images, embed.URL)
+					if embed.Image != nil {
+						slog.Info("messageCreate", "embed.Image", embed.Image)
+						images = append(images, embed.Image.URL)
 					}
 				}
 				if len(images) == 0 {
@@ -110,7 +114,6 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 			ResponseImage[m.ReferencedMessage.ID] = images
 			slog.Info("Message", "返回的图片", images)
 		}
-
 	}()
 
 	/*	//只集成了图片信息,所以要等待图片,不考虑聊天信息
@@ -155,17 +158,12 @@ func Operation(ctx context.Context, cancel context.CancelFunc, ticker *time.Tick
 	for {
 		select {
 		case <-ticker.C:
-			channelMessage, _ := s.ChannelMessage(m.ChannelID, m.ReferencedMessage.ID)
-			messageEmbeds := channelMessage.Embeds
-			if messageEmbeds != nil && len(messageEmbeds) > 0 {
-				ticker.Stop()
-				return
-			}
-			message, _ := s.ChannelMessage(m.ChannelID, m.Message.ID)
-			embeds := message.Embeds
-			if embeds != nil && len(embeds) > 0 {
-				ticker.Stop()
-				return
+			message, err := s.ChannelMessage(m.ChannelID, m.Message.ID)
+			if err == nil {
+				if message.Embeds != nil && len(message.Embeds) > 0 {
+					ticker.Stop()
+					return
+				}
 			}
 		case <-ctx.Done():
 			return

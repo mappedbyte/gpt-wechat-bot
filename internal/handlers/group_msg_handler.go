@@ -114,8 +114,12 @@ func (g *GroupMessage) GroupReplyImage() error {
 	responseText := atText + "\u2005" + "\n" + content + "\n" + line + "\n"
 	//client := http.Client{}
 	//client.Transport = global.Client.Transport
+	if len(images) == 0 {
+		images = append(images, global.DeadlineExceededImage)
+	}
+	slog.Info("GroupReplyImage", "images", images)
 	for _, image := range images {
-		if len(images) > 0 {
+		if len(image) > 0 {
 			request, _ := http.NewRequest("GET", image, nil)
 			response, err := global.DiscordSession.Client.Do(request)
 			//response, err := http.Get(image)
@@ -125,13 +129,13 @@ func (g *GroupMessage) GroupReplyImage() error {
 			}
 			_, err = g.msg.ReplyImage(response.Body)
 			if err != nil {
+				slog.Error("group_msg_handler", "GroupReplyImage.ReplyImage error", err.Error())
 				//出现失败  重试一次
 				g.msg.ReplyImage(response.Body)
 			}
-
 			responseText = strings.Trim(responseText, "\n")
-			_, err = g.msg.ReplyText(responseText)
 		}
 	}
+	_, _ = g.msg.ReplyText(responseText)
 	return nil
 }

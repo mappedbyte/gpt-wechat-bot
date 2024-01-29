@@ -50,7 +50,7 @@ func (o *OpenAI) Chat(msg []any) (string, error) {
 	request.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
 	response, err := global.Client.Do(request)
 	if err != nil || (response != nil && response.StatusCode != 200) {
-		slog.Info("OpenAI", "请求gpt接口出现异常", "responseStatus:"+strconv.Itoa(response.StatusCode))
+		slog.Info("OpenAI", "请求gpt接口出现异常", err.Error())
 		return global.DeadlineExceededText, errors.New("请求gpt接口出现异常")
 	}
 	fmt.Println(response.StatusCode)
