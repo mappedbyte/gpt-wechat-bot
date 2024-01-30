@@ -6,5 +6,6 @@ import (
 
 func main() {
 	bot := application.Run()
+	application.RunGin()
 	_ = bot.Block()
 }

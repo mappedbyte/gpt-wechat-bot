@@ -2,9 +2,14 @@ package application
 
 import (
 	"github.com/eatmoreapple/openwechat"
+	"github.com/gin-gonic/gin"
 	"log/slog"
+	"net/http"
 	"os"
+	"time"
 	"wechatBot/internal/config"
+	"wechatBot/internal/gin/middleware"
+	"wechatBot/internal/gpt"
 	"wechatBot/internal/handlers"
 	"wechatBot/internal/initialize"
 	"wechatBot/internal/notify"
@@ -50,3 +55,48 @@ func Run() *openwechat.Bot {
 	slog.Error("登录出现错误:", err.Error())
 	return bot, err
 }*/
+
+type Prompt struct {
+	Prompt string `json:"prompt"`
+}
+
+type DALLImage struct {
+	Url string `json:"url"`
+}
+
+type DALLResponse struct {
+	Created int64       `json:"created"`
+	Data    []DALLImage `json:"data"`
+}
+
+func RunGin() {
+	g := gin.Default()
+	r := g.Group("/v1", middleware.Cors())
+	r.POST("/images/generations", func(context *gin.Context) {
+		prompt := Prompt{}
+		dallImages := make([]DALLImage, 0)
+		if err := context.ShouldBindJSON(&prompt); err == nil {
+			images := gpt.ReplyImage(prompt.Prompt)
+
+			for _, image := range images {
+				dallImages = append(dallImages, DALLImage{
+					Url: image,
+				})
+			}
+			dallResponse := &DALLResponse{
+				Created: time.Now().Unix(),
+				Data:    dallImages,
+			}
+			context.JSON(http.StatusOK, dallResponse)
+			return
+		}
+
+		dallResponse := &DALLResponse{
+			Created: time.Now().Unix(),
+			Data:    dallImages,
+		}
+		context.JSON(http.StatusOK, dallResponse)
+	})
+
+	g.Run(":12345")
+}
