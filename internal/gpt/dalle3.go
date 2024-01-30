@@ -85,6 +85,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 					images = append(images, pic)
 				}
 			}
+
 			if len(images) == 0 {
 				ticker := time.NewTicker(1 * time.Second)
 				ctx, cancel := context.WithTimeout(context.Background(), 40*time.Second)
