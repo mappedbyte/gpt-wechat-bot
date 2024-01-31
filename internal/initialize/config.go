@@ -66,3 +66,50 @@ func InitDiscord() {
 	}
 	global.DiscordSession = discord
 }
+
+func InitEnv() {
+	viper.AutomaticEnv()
+	cnf := config.ServerConfig{}
+	channelId := viper.GetString("CHANNEL_ID")
+	botId := viper.GetString("BOT_ID")
+	sendBotToken := viper.GetString("SEND_BOT_TOKEN")
+	proxyUrl := viper.GetString("PROXY_URL")
+	proxyEnable := viper.GetBool("PROXY_ENABLE")
+	discordConfig := config.DiscordConfig{
+		ChannelId:    channelId,
+		BotId:        botId,
+		SendBotToken: sendBotToken,
+		ProxyEnable:  proxyEnable,
+		ProxyUrl:     proxyUrl,
+	}
+	cnf.DiscordConfig = discordConfig
+	pushUrl := viper.GetString("PUSH_URL")
+	pushToken := viper.GetString("PUSH_TOKEN")
+	pushPlus := config.PushPlus{
+		Token: pushUrl,
+		Url:   pushToken,
+	}
+	cnf.PushPlus = pushPlus
+	apiBase := viper.GetString("ONE_API_BASE")
+	apiToken := viper.GetString("API_TOKEN")
+	apiConfig := config.OneApiConfig{
+		Proxy:  apiBase,
+		SToken: apiToken,
+	}
+	cnf.OneApiConfig = apiConfig
+	imagePrefix := viper.GetString("MODE_IMAGE_PREFIX")
+	mode := config.Mode{ImagePrefix: imagePrefix}
+	cnf.Mode = mode
+	chatProxyEnable := viper.GetBool("CHAT_PROXY_ENABLE")
+	chatProxyUrl := viper.GetString("CHAT_PROXY_URL")
+	autoPass := viper.GetBool("AUTO_PASS")
+	chat := config.Chat{
+		Proxy:          chatProxyEnable,
+		ProxyUrl:       chatProxyUrl,
+		SessionTimeOut: 60,
+		Model:          "gpt-4",
+		AutoPass:       autoPass,
+	}
+	cnf.Chat = chat
+	global.ServerConfig = &cnf
+}

@@ -11,7 +11,8 @@ import (
 )
 
 func Run() *openwechat.Bot {
-	initialize.InitConfig()
+	//initialize.InitConfig()
+	initialize.InitEnv()
 	initialize.InitProxy()
 	initialize.InitDiscord()
 	h, err := handlers.NewHandlers()
