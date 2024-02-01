@@ -27,13 +27,16 @@ type UserMessage struct {
 
 func UserMessageContextHandler() func(ctx *openwechat.MessageContext) {
 	return func(ctx *openwechat.MessageContext) {
-		//获取消息
-		userMessage, err := NewUserMessage(ctx.Message)
-		if err != nil {
-			slog.Error("init user message error")
-			return
-		}
-		_ = userMessage.Handle()
+		go func() {
+			//获取消息
+			userMessage, err := NewUserMessage(ctx.Message)
+			if err != nil {
+				slog.Error("init user message error")
+				return
+			}
+			_ = userMessage.Handle()
+		}()
+
 	}
 }
 func NewUserMessage(message *openwechat.Message) (*UserMessage, error) {
