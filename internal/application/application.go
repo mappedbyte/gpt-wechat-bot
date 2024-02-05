@@ -11,8 +11,7 @@ import (
 )
 
 func Run() *openwechat.Bot {
-	//initialize.InitConfig()
-	initialize.InitEnv()
+	initialize.InitChooseConfig()
 	initialize.InitProxy()
 	initialize.InitDiscord()
 	h, err := handlers.NewHandlers()
@@ -28,6 +27,11 @@ func Run() *openwechat.Bot {
 		pushPlus := notify.PushPlus{}
 		_ = pushPlus.SendNotify("微信Bot退出了,快去检查下!")
 		return err
+	}
+	bot.LogoutCallBack = func(bot *openwechat.Bot) {
+		slog.Info("application.Run", "MessageErrorHandler 微信Bot退出,开始执行推送逻辑")
+		pushPlus := notify.PushPlus{}
+		_ = pushPlus.SendNotify("微信Bot退出了,快去检查下!")
 	}
 	reloadStorage := openwechat.NewFileHotReloadStorage("storage.json")
 	defer func() {

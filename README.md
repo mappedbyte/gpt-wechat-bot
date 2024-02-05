@@ -63,9 +63,11 @@
 
 
 ### docker部署 (推荐)
+
+对于docker部署,默认使用环境变量,如果需要修改配置文件,请使用-v参数挂载配置文件到容器中。当环境变量和配置文件同时存在时,优先使用配置文件。
 ```
 # 下载镜像
-docker pull mappedbyte/chatbot:v1
+docker pull mappedbyte/chatbot:latest
 
 # 指令说明
 
@@ -82,7 +84,7 @@ docker run --name chatbot -d --restart always \
 -e PROXY_URL="http://172.17.0.1:7890" \   #接口代理地址
 -e AUTO_PASS=true \
 -e TZ=Asia/Shanghai \
-mappedbyte/chatbot:v1
+mappedbyte/chatbot:latest
 
 
 
@@ -100,9 +102,12 @@ docker run --name chatbot -d --restart always \
 -e PROXY_URL="http://172.17.0.1:7890" \
 -e AUTO_PASS=true \
 -e TZ=Asia/Shanghai \
-mappedbyte/chatbot:v1
+mappedbyte/chatbot:latest
 
 
+
+
+执行之后一定要查看docker日志，查看是否启动成功，并且进行扫码登录操作
 ```
 
 

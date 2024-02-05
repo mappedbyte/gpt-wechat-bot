@@ -30,6 +30,19 @@ func InitProxy() {
 	}
 }
 
+func InitChooseConfig() {
+	configFileName := "config.yml"
+	_, err := os.Stat(configFileName)
+	if err == nil {
+		slog.Info("InitChooseConfig", "配置文件选择", "本地配置文件")
+		InitConfig()
+	}
+	if os.IsNotExist(err) {
+		slog.Info("InitChooseConfig", "配置文件选择", "环境变量")
+		InitEnv()
+	}
+}
+
 func InitConfig() {
 	configFileName := "config.yml"
 	v := viper.New()
