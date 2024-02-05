@@ -24,4 +24,4 @@ discord:
   botId: #coze机器人的ID
   sendBotToken: #discord自建机器人的token
   proxyUrl: http://127.0.0.1:7890  #代理地址
-  proxyEnable: false #是否开启代理
+  proxyEnable: true #是否开启代理

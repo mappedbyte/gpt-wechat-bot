@@ -34,6 +34,6 @@ func (p *PushPlus) SendNotify(msg string) error {
 	if err != nil {
 		return err
 	}
-	slog.Info("消息通知发送状态码:", response.StatusCode)
+	slog.Info("消息通知发送状态码:", "messageCode", response.StatusCode)
 	return nil
 }
