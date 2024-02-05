@@ -41,6 +41,7 @@ func InitChooseConfig() {
 		slog.Info("InitChooseConfig", "配置文件选择", "环境变量")
 		InitEnv()
 	}
+	slog.Info("InitChooseConfig", "config", global.ServerConfig)
 }
 
 func InitConfig() {
@@ -99,8 +100,8 @@ func InitEnv() {
 	pushUrl := viper.GetString("PUSH_URL")
 	pushToken := viper.GetString("PUSH_TOKEN")
 	pushPlus := config.PushPlus{
-		Token: pushUrl,
-		Url:   pushToken,
+		Token: pushToken,
+		Url:   pushUrl,
 	}
 	cnf.PushPlus = pushPlus
 	apiBase := viper.GetString("ONE_API_BASE")

@@ -7,6 +7,7 @@ import (
 	"wechatBot/internal/config"
 	"wechatBot/internal/handlers"
 	"wechatBot/internal/initialize"
+	"wechatBot/internal/notify"
 )
 
 func Run() *openwechat.Bot {
@@ -21,6 +22,16 @@ func Run() *openwechat.Bot {
 	bot := openwechat.DefaultBot(openwechat.Desktop)
 	bot.UUIDCallback = config.CheckOs()
 	bot.MessageHandler = h
+
+	bot.MessageErrorHandler = func(err error) error {
+		slog.Info("bot.MessageErrorHandler", "exit", "微信Bot退出,开始执行推送逻辑")
+		pushPlus := notify.PushPlus{}
+		notifyErr := pushPlus.SendNotify("微信Bot退出了,快去检查下!")
+		if notifyErr != nil {
+			slog.Error("push", "消息推送失败", notifyErr.Error())
+		}
+		return err
+	}
 	reloadStorage := openwechat.NewFileHotReloadStorage("storage.json")
 	defer func() {
 		_ = reloadStorage.Close()
