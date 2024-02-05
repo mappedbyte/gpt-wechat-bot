@@ -56,7 +56,9 @@ func NewGroupMessage(message *openwechat.Message) (*GroupMessage, error) {
 func (g *GroupMessage) handle() error {
 	//如果是纯文本，使用ChatGPT进行回复
 	if g.msg.IsText() && g.msg.IsAt() {
-		if strings.Contains(g.msg.Content, global.ServerConfig.Mode.ImagePrefix) {
+		replaceText := "@" + g.self.NickName
+		content := strings.ReplaceAll(g.msg.Content, replaceText, "")
+		if strings.HasPrefix(strings.TrimSpace(content), global.ServerConfig.Mode.ImagePrefix) {
 			return g.GroupReplyImage()
 		}
 		return g.ReplyText()
@@ -79,10 +81,10 @@ func (g *GroupMessage) ReplyText() error {
 	if lens <= 50 {
 		lens = 50
 	}
-	line := strings.Repeat("-", lens)
+	//line := strings.Repeat("-", lens)
 	atText := "@" + g.sender.NickName
 
-	responseText = atText + "\u2005" + "\n" + content + "\n" + line + "\n" + responseText
+	responseText = atText + "\u2005" + "\n" + responseText
 	responseText = strings.Trim(responseText, "\n")
 	_, err = g.msg.ReplyText(responseText)
 	return err
@@ -106,12 +108,12 @@ func (g *GroupMessage) NewRequestText() []any {
 func (g *GroupMessage) GroupReplyImage() error {
 	replaceText := "@" + g.self.NickName
 	content := strings.ReplaceAll(g.msg.Content, replaceText, "")
-	content = strings.ReplaceAll(content, "画图：", "")
+	//content = strings.ReplaceAll(content, "画图：", "")
 	images := gpt.ReplyImage(content)
 
-	line := strings.Repeat("-", 50)
+	//line := strings.Repeat("-", 50)
 	atText := "@" + g.sender.NickName
-	responseText := atText + "\u2005" + "\n" + content + "\n" + line + "\n"
+	responseText := atText + "\u2005" + "\n"
 	//client := http.Client{}
 	//client.Transport = global.Client.Transport
 	if len(images) == 0 {

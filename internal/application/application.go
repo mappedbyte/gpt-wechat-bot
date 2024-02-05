@@ -25,6 +25,10 @@ func Run() *openwechat.Bot {
 
 	bot.MessageErrorHandler = func(err error) error {
 		slog.Info("bot.MessageErrorHandler", "exit", "微信Bot退出,开始执行推送逻辑")
+		err = bot.CrashReason()
+		if err != nil {
+			slog.Error(err.Error())
+		}
 		pushPlus := notify.PushPlus{}
 		notifyErr := pushPlus.SendNotify("微信Bot退出了,快去检查下!")
 		if notifyErr != nil {
@@ -36,10 +40,17 @@ func Run() *openwechat.Bot {
 	defer func() {
 		_ = reloadStorage.Close()
 	}()
-	if err := bot.Login(); err != nil {
-		slog.Error("application.Run", "errorMsg", "登录出现错误:"+err.Error())
-		os.Exit(1)
+
+	// 先尝试使用热登录
+	err = bot.HotLogin(reloadStorage, openwechat.NewRetryLoginOption())
+	if err != nil {
+		// 如果热登录失败，再尝试使用扫码登录
+		if err := bot.Login(); err != nil {
+			slog.Error("application.Run", "errorMsg", "登录出现错误:"+err.Error())
+			os.Exit(1)
+		}
 	}
+
 	user, err := bot.GetCurrentUser()
 	if err != nil {
 		slog.Error("application.Run", "errorMsg", "获取当前用户出现错误:"+err.Error())

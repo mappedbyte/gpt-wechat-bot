@@ -48,6 +48,7 @@ func ReplyImage(imagePrompt string) []string {
 		slog.Info("ReplyImage", "imagePrompt", imagePrompt)
 		imagePrompt = fmt.Sprintf(` {"model": "dall-e-3","prompt": "%s","n": 1,"size": "1024x1024"}`, imagePrompt)
 	}*/
+	imagePrompt = " " + imagePrompt
 	images := make([]string, 0)
 	//images = append(images, global.DeadlineExceededImage)
 	if UserMention == "" {
@@ -64,7 +65,7 @@ func ReplyImage(imagePrompt string) []string {
 		images = append(images, global.DeadlineExceededImage)
 		return images
 	}
-	ctx, cancelFunc := context.WithTimeout(context.Background(), 60*time.Second)
+	ctx, cancelFunc := context.WithTimeout(context.Background(), 600*time.Second)
 	slog.Info("ReplyImage", "请求的接口MessageId", message.ID)
 	go WatchImage(ctx, cancelFunc, message.ID)
 	<-ctx.Done()

@@ -53,7 +53,7 @@ func NewUserMessage(message *openwechat.Message) (*UserMessage, error) {
 }
 func (u *UserMessage) Handle() error {
 	if u.msg.IsText() {
-		if strings.HasPrefix(u.msg.Content, "画图：") {
+		if strings.HasPrefix(u.msg.Content, "画") {
 			return u.ReplyImage()
 		}
 		return u.ReplyText()
@@ -90,8 +90,9 @@ func (u *UserMessage) NewRequestText() []any {
 
 func (u *UserMessage) ReplyImage() error {
 	content := u.msg.Content
-	content = strings.ReplaceAll(content, "画图：", "")
-	images := gpt.ReplyImage(content)
+	//content = strings.ReplaceAll(content, "画", "")
+
+	images := gpt.ReplyImage(" " + content)
 	//client := http.Client{}
 	//client.Transport = global.Client.Transport
 	for _, image := range images {

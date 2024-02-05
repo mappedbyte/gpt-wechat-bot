@@ -8,20 +8,20 @@ chat:
 
 # 以下为可选配置 画图前缀
 mode:
-  imagePrefix: 画图：
+  imagePrefix: 画
 
 one-api:
-  proxy: #gpt接口地址
-  s-token: #gpt token
+  proxy: https://one.caifree.com
+  s-token: sk-WMNKhCxTzQ1aRl9BB34a3fA005F2422b860bE4F6F8DfE446
 
 push:
   url: http://www.pushplus.plus/send
-  token: #pushPlus的个人token
+  token: sk-WMNKhCxTzQ1aRl9BB34a3fA005F2422b860bE4F6F8DfE446
 
 
 discord:
-  channelId: #频道ID
-  botId: #coze机器人的ID
-  sendBotToken: #discord自建机器人的token
+  channelId: 1202625420994936834
+  botId: 1202630278778978315
+  sendBotToken: MTIwMjYyNzI3NTg1ODkxMTMwMg.GVbYxQ.GRIK3lwjWnoHV8JGvySYmOTejPeXWmHKEMCQ0E
   proxyUrl: http://127.0.0.1:7890  #代理地址
   proxyEnable: true #是否开启代理
